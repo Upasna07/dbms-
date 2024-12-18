@@ -1,0 +1,75 @@
+use teacherdb; switched to db teacherdb
+ db.createCollection('Teacher');
+ db.Teacher.insertOne({T_id:111, T_name:'RNW', T_dept:'CSE', T_sal:30000, T_add:'mina
+ street,Pune'});
+ db.Teacher.find();
+ { id: ObjectId('67173adbfbafea3535e3add6'),
+ T_id: 111,
+ T_name: 'RNW',
+ T_dept: 'CSE',
+ T_sal: 30000,
+ T_add: 'mina street,Pune'
+ }
+ {
+ }
+ _id: ObjectId('67173adbfbafea3535e3add7'),
+ T_id: 112,
+ T_name: 'RRB',
+ T_dept: 'IT',
+ T_sal: 25000,
+ T_add: 'akash society,Nagpur'
+ db.Teacher.updateOne({T_dept:'CSE'},{$set:{T_dept:'IT'}});
+ { acknowledged: true,
+ insertedId: null, matchedCount:
+ 1, modifiedCount: 1,
+ upsertedCount: 0
+ }
+ db.Teacher.deleteOne({T_id:111});
+ { acknowledged: true,
+ deletedCount: 1
+ }
+ db.Teacher.find({T_id:111});
+ db.Teacher.find({T_id:113});
+ {
+ _id: ObjectId('67173adbfbafea3535e3add8'),
+ T_id: 113,
+ T_name: 'SMK',
+ T_dept: 'IT',
+ T_sal: 38000,
+ T_add: 'Pune'
+ }
+ db.Teacher.updateOne({T_id:113},{$set:{T_sal:45000}});
+ { acknowledged: true,
+ insertedId: null, matchedCount:
+ 1, modifiedCount: 1,
+ upsertedCount: 0
+ }
+ db.Teacher.find({T_id:113});
+ {
+_id: ObjectId('67173adbfbafea3535e3add8'),
+ T_id: 113,
+ T_name: 'SMK',
+ T_dept: 'IT',
+ T_sal: 45000,
+ T_add: 'Pune'
+ }
+ db.Teacher.deleteMany({T_dept:'CSE'});
+ { acknowledged: true, deletedCount: 1 }
+ db.Teacher.find({T_dept:’CSE’});
+ b.Teacher.find({T_dept:'IT'});
+ {
+ _id: ObjectId('67173adbfbafea3535e3add7'),
+ T_id: 112,
+ T_name: 'RRB',
+ T_dept: 'IT',
+ T_sal: 25000,
+ T_add: 'akash society,Nagpur'
+ }
+ {
+ }
+ _id: ObjectId('67173adbfbafea3535e3add8'),
+ T_id: 113,
+ T_name: 'SMK',
+ T_dept: 'IT',
+ T_sal: 45000,
+ T_add: '
