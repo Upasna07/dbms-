@@ -1,0 +1,43 @@
+Query 1: List all the student details studying in fourth semester 'C' section.
+sql
+Copy code
+SELECT *
+FROM Student
+WHERE Semester = 4 AND Section = 'C';
+
+
+Query 2: Compute the total number of male and female students in each semester and in each section.
+sql
+Copy code
+SELECT Semester, Section, Gender, COUNT(*) AS TotalStudents
+FROM Student
+GROUP BY Semester, Section, Gender
+ORDER BY Semester, Section, Gender;
+
+Query 3: Create a view of Test1 marks of student USN '1BI15CS101' in all subjects.
+sql
+Copy code
+CREATE VIEW Test1Marks_1BI15CS101 AS
+SELECT USN, Subject, Test1Marks
+FROM Marks
+WHERE USN = '1BI15CS101';
+
+Query 4: Calculate the FinalA (average of best two test marks) and update the corresponding table for all students.
+sql
+Copy code
+UPDATE Marks
+SET FinalA = (Test1Marks + Test2Marks + Test3Marks 
+             - LEAST(Test1Marks, Test2Marks, Test3Marks)) / 2;
+
+Query 5: Categorize students into 'Outstanding', 'Average', and 'Weak' based on FinalA and display these details only for 8th semester A, B, and C section students.
+sql
+Copy code
+SELECT S.USN, S.Name, S.Semester, S.Section, M.FinalA,
+       CASE 
+           WHEN M.FinalA BETWEEN 17 AND 20 THEN 'Outstanding'
+           WHEN M.FinalA BETWEEN 12 AND 16 THEN 'Average'
+           WHEN M.FinalA < 12 THEN 'Weak'
+       END AS CAT
+FROM Student S
+JOIN Marks M ON S.USN = M.USN
+WHERE S.Semester = 8 AND S.Section IN ('A', 'B', 'C');
