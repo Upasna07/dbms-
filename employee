@@ -1,0 +1,64 @@
+Query 1: List all project numbers for projects that involve an employee whose last name is 'Scott', either as a worker or as a manager of the department controlling the project.
+sql
+Copy code
+SELECT DISTINCT P.ProjectID
+FROM Project P
+JOIN Works_On W ON P.ProjectID = W.ProjectID
+JOIN Employee E ON W.SSN = E.SSN
+WHERE E.LastName = 'Scott'
+   OR P.DepartmentID IN (
+       SELECT D.DepartmentID
+       FROM Department D
+       JOIN Employee M ON D.ManagerSSN = M.SSN
+       WHERE M.LastName = 'Scott'
+   );
+
+
+Query 2: Show the resulting salaries if every employee working on the 'IoT' project is given a 10% raise.
+sql
+Copy code
+SELECT E.SSN, E.Salary, E.Salary * 1.1 AS RaisedSalary
+FROM Employee E
+JOIN Works_On W ON E.SSN = W.SSN
+JOIN Project P ON W.ProjectID = P.ProjectID
+WHERE P.ProjectName = 'IoT';
+
+
+Query 3: Find the sum of salaries, maximum salary, minimum salary, and average salary of employees in the 'Accounts' department.
+sql
+Copy code
+SELECT SUM(E.Salary) AS TotalSalary,
+       MAX(E.Salary) AS MaxSalary,
+       MIN(E.Salary) AS MinSalary,
+       AVG(E.Salary) AS AvgSalary
+FROM Employee E
+JOIN Department D ON E.DepartmentID = D.DepartmentID
+WHERE D.DepartmentName = 'Accounts';
+
+
+Query 4: Retrieve the name of each employee who works on all projects controlled by department number 5 (using NOT EXISTS operator).
+sql
+Copy code
+SELECT E.SSN, E.LastName
+FROM Employee E
+WHERE NOT EXISTS (
+    SELECT P.ProjectID
+    FROM Project P
+    WHERE P.DepartmentID = 5
+      AND NOT EXISTS (
+          SELECT W.SSN
+          FROM Works_On W
+          WHERE W.SSN = E.SSN AND W.ProjectID = P.ProjectID
+      )
+);
+
+
+Query 5: For departments with more than 5 employees, retrieve the department number and the number of employees earning more than Rs. 6,00,000.
+sql
+Copy code
+SELECT D.DepartmentID, COUNT(E.SSN) AS HighEarningEmployees
+FROM Department D
+JOIN Employee E ON D.DepartmentID = E.DepartmentID
+GROUP BY D.DepartmentID
+HAVING COUNT(E.SSN) > 5 AND
+       SUM(CASE WHEN E.Salary > 600000 THEN 1 ELSE 0 END) > 0;
