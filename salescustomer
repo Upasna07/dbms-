@@ -1,0 +1,75 @@
+Query 1: Count the customers with grades above Bangalore's average.
+sql
+Copy code
+SELECT COUNT(*)
+FROM Customers
+WHERE Grade > (
+    SELECT AVG(Grade)
+    FROM Customers
+    WHERE City = 'Bangalore'
+);
+
+
+Query 2: Find the name and numbers of all salesmen who had more than one customer.
+sql
+Copy code
+SELECT S.SalesmanName, S.PhoneNumber
+FROM Salesman S
+JOIN Customers C ON S.SalesmanID = C.SalesmanID
+GROUP BY S.SalesmanID, S.SalesmanName, S.PhoneNumber
+HAVING COUNT(C.CustomerID) > 1;
+
+
+Query 3: List all the salesmen and indicate those who have and don’t have customers in their cities (using UNION operation).
+sql
+Copy code
+SELECT S.SalesmanName, 'Has Customers' AS Status
+FROM Salesman S
+WHERE EXISTS (
+    SELECT 1
+    FROM Customers C
+    WHERE S.City = C.City
+)
+UNION
+SELECT S.SalesmanName, 'No Customers' AS Status
+FROM Salesman S
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM Customers C
+    WHERE S.City = C.City
+);
+
+
+Query 4: Create a view that finds the salesman who has the customer with the highest order of a day.
+sql
+Copy code
+CREATE VIEW TopSalesman AS
+SELECT S.SalesmanName, C.CustomerName, O.OrderAmount, O.OrderDate
+FROM Salesman S
+JOIN Customers C ON S.SalesmanID = C.SalesmanID
+JOIN Orders O ON C.CustomerID = O.CustomerID
+WHERE O.OrderAmount = (
+    SELECT MAX(OrderAmount)
+    FROM Orders O1
+    WHERE O1.OrderDate = O.OrderDate
+);
+
+
+Query 5: Demonstrate the DELETE operation by removing the salesman with ID 1000. All his orders must also be deleted.
+sql
+Copy code
+-- Delete Orders of Customers managed by the salesman with ID 1000
+DELETE FROM Orders
+WHERE CustomerID IN (
+    SELECT CustomerID
+    FROM Customers
+    WHERE SalesmanID = 1000
+);
+
+-- Delete Customers managed by the salesman with ID 1000
+DELETE FROM Customers
+WHERE SalesmanID = 1000;
+
+-- Delete the salesman with ID 1000
+DELETE FROM Salesman
+WHERE SalesmanID = 1000;
